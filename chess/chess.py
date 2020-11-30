@@ -9,18 +9,20 @@ class Chess():
         self.board = []
         self.board.append('RNBQKBNR')
         self.board.append('PPPPPPPP')
-        # self.board.append('........')
+        #self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
-        # self.board.append('........')
+        #self.board.append('........')
         self.board.append('pppppppp')
         self.board.append('rnbqkbnr')
 
-        # self.reset_board()
-        # self.set_piece(4,4,'Q')
-        # self.set_piece(4,5,'p')
+        #self.reset_board()
+        #self.set_piece(5,0,'K')
+        #self.set_piece(5,7,'k')
+        #self.set_piece(4,4,'n')
+        #self.set_piece(2,5,'N')
 
     def reset_board(self):
         self.board = []
@@ -67,6 +69,10 @@ class Chess():
             return self.moveBishop(file, rank, white)
         if type == 'Q' or type == 'q':
             return self.moveQueen(file, rank, white)
+        if type == 'K' or type == 'k':
+            return self.moveKing(file, rank, white)
+        if type == 'N' or type == 'n':
+            return self.moveKnight(file, rank, white)
         return None
 
     def pieceExists(self, piece):
@@ -121,6 +127,22 @@ class Chess():
         moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
         return moves[0]
 
+    def moveDirectionOnce(self, file, rank, white, xdelta, ydelta):
+        me = self.getPiece(file, rank)
+        moves = []
+        new_file = file + xdelta
+        new_rank = rank + ydelta
+        target = self.getPiece(new_file, new_rank)
+        if target == None:
+            return moves
+        if target == '.':
+            moves.append([new_file, new_rank, 0, file, rank, me])
+            return moves
+        if not self.opposition(target, white):
+            return moves
+        moves.append([new_file, new_rank, self.getPieceValue(target), file, rank, me])
+        return moves
+
     def moveDirection(self, file, rank, white, xdelta, ydelta):
         me = self.getPiece(file, rank)
         moves = []
@@ -163,6 +185,38 @@ class Chess():
         moves.extend(self.moveDirection(file, rank, white, 0, 1))
         moves.extend(self.moveDirection(file, rank, white, -1, 0))
         moves.extend(self.moveDirection(file, rank, white, 0, -1))
+        random.shuffle(moves)
+        moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
+        if len(moves) == 0:
+            return None
+        return moves[0]
+
+    def moveKing(self, file, rank, white):
+        moves = []
+        moves.extend(self.moveDirectionOnce(file, rank, white, 1, 1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -1, 1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 1, -1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -1, -1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 1, 0))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 0, 1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -1, 0))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 0, -1))
+        random.shuffle(moves)
+        moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
+        if len(moves) == 0:
+            return None
+        return moves[0]
+
+    def moveKnight(self, file, rank, white):
+        moves = []
+        moves.extend(self.moveDirectionOnce(file, rank, white, 1, 2))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -1, 2))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 2, 1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 2, -1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, 1, -2))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -1, -2))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -2, 1))
+        moves.extend(self.moveDirectionOnce(file, rank, white, -2, -1))
         random.shuffle(moves)
         moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
         if len(moves) == 0:
