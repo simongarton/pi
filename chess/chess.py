@@ -8,15 +8,25 @@ class Chess():
     def __init__(self):
         self.board = []
         self.board.append('RNBQKBNR')
-        #self.board.append('PPPPPPPP')
+        self.board.append('PPPPPPPP')
+        # self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
-        self.board.append('........')
-        self.board.append('........')
-        #self.board.append('pppppppp')
+        # self.board.append('........')
+        self.board.append('pppppppp')
         self.board.append('rnbqkbnr')
+
+        # self.reset_board()
+        # self.set_piece(4,4,'Q')
+        # self.set_piece(4,5,'p')
+
+    def reset_board(self):
+        self.board = []
+        for i in range(0,8):
+            self.board.append('........')
+
 
     def drawBoard(self):
         for rank in self.board:
@@ -53,7 +63,17 @@ class Chess():
             return self.movePawn(file, rank, white)
         if type == 'R' or type == 'r':
             return self.moveRook(file, rank, white)
+        if type == 'B' or type == 'b':
+            return self.moveBishop(file, rank, white)
+        if type == 'Q' or type == 'q':
+            return self.moveQueen(file, rank, white)
         return None
+
+    def pieceExists(self, piece):
+        for rank in self.board:
+            if piece in rank:
+                return True
+        return False
 
     def getPiece(self, file, rank):
         if rank < 0 or rank > 7:
@@ -101,14 +121,13 @@ class Chess():
         moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
         return moves[0]
 
-    def moveRookDirection(self, file, rank, white, xdelta, ydelta):
+    def moveDirection(self, file, rank, white, xdelta, ydelta):
         me = self.getPiece(file, rank)
         moves = []
         new_file = file + xdelta
         new_rank = rank + ydelta
         while(True):
             target = self.getPiece(new_file, new_rank)
-            print('{}.{} {}'.format(new_file, new_rank, target))
             if target == None:
                 break
             if target == '.':
@@ -124,10 +143,50 @@ class Chess():
 
     def moveRook(self, file, rank, white):
         moves = []
-        moves.extend(self.moveRookDirection(file, rank, white, 1, 0))
-        moves.extend(self.moveRookDirection(file, rank, white, 0, 1))
-        moves.extend(self.moveRookDirection(file, rank, white, -1, 0))
-        moves.extend(self.moveRookDirection(file, rank, white, 0, -1))
+        moves.extend(self.moveDirection(file, rank, white, 1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, 1))
+        moves.extend(self.moveDirection(file, rank, white, -1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, -1))
+        random.shuffle(moves)
+        moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
+        if len(moves) == 0:
+            return None
+        return moves[0]
+
+    def moveQueen(self, file, rank, white):
+        moves = []
+        moves.extend(self.moveDirection(file, rank, white, 1, 1))
+        moves.extend(self.moveDirection(file, rank, white, -1, 1))
+        moves.extend(self.moveDirection(file, rank, white, 1, -1))
+        moves.extend(self.moveDirection(file, rank, white, -1, -1))
+        moves.extend(self.moveDirection(file, rank, white, 1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, 1))
+        moves.extend(self.moveDirection(file, rank, white, -1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, -1))
+        random.shuffle(moves)
+        moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
+        if len(moves) == 0:
+            return None
+        return moves[0]
+
+    def moveBishop(self, file, rank, white):
+        moves = []
+        moves.extend(self.moveDirection(file, rank, white, 1, 1))
+        moves.extend(self.moveDirection(file, rank, white, -1, 1))
+        moves.extend(self.moveDirection(file, rank, white, 1, -1))
+        moves.extend(self.moveDirection(file, rank, white, -1, -1))
+        random.shuffle(moves)
+        moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
+        if len(moves) == 0:
+            return None
+        return moves[0]
+
+    def moveRook(self, file, rank, white):
+        moves = []
+        moves.extend(self.moveDirection(file, rank, white, 1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, 1))
+        moves.extend(self.moveDirection(file, rank, white, -1, 0))
+        moves.extend(self.moveDirection(file, rank, white, 0, -1))
         random.shuffle(moves)
         moves = sorted(moves, key=lambda tup:tup[2], reverse=True)
         if len(moves) == 0:
@@ -148,11 +207,7 @@ class Chess():
             self.set_piece(move[0],move[1],'Q')
         if move[5] == 'p' and move[1] == 0:
             self.set_piece(move[0],move[1],'Q')
-        if move[5] == 'K':
-            print("black wins")
-        if move[5] == 'k':
-            print("white wins")
-    
+        # en passant 
 
     def moveWhite(self):
         return self.move_generic(True)
@@ -175,7 +230,7 @@ class Chess():
     def play(self):
         self.drawBoard()
         move = 1
-        sleep = 1
+        sleep = 0.1
         while(True):
             print('{} white \n'.format(move))
             if not self.moveWhite():
@@ -183,12 +238,18 @@ class Chess():
                 break
             self.drawBoard()
             time.sleep(sleep)
+            if not self.pieceExists('k'):
+                print('White won')
+                break
             print('{} black \n'.format(move))
             if not self.moveBlack():
                 print('black has no moves')
                 break
             self.drawBoard()
             time.sleep(sleep)
+            if not self.pieceExists('K'):
+                print('Black won')
+                break
             move = move + 1
         pass
 
