@@ -8,6 +8,7 @@ from ISStreamer.Streamer import Streamer
 
 from life import Life
 from snake import Snake
+from chess import Chess
 
 #from sense_emu import SenseHat
 from sense_hat import SenseHat
@@ -298,17 +299,20 @@ class Weather():
                 if (now - call) > 60 * 5:
                     self.uploadTempHumidityDataToIS()
                     call = time.time()
-                if (l % 3 == 0):
+                if (l % 4 == 3):
                     life = Life()
                     life.run(8, 8, 30)
-                if (l % 3 == 1):
+                if (l % 4 == 1):
                     snake = Snake()
                     try:
                         snake.run(30)
                     except Exception as e:
                         print(e)
-                if (l % 3 == 2):
+                if (l % 4 == 2):
                     self.heart()
+                if (l % 4 == 0):
+                    chess = Chess()
+                    chess.play()
                 self.sense.clear()
                 time.sleep(5)
 
