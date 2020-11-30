@@ -19,7 +19,7 @@ EXCLUDE = ''
 URL = 'https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude{}&appid={}'
 
 ACCESS_KEY = "ist_tYGX1IWVIMYrd0hwY8LU3tEK4-6nA6e1"
-BUCKET_KEY = "3D7GUEDB77GU"
+BUCKET_KEY = "DYCKPSMEJ57P"
 BUCKET_NAME = "Office"
 
 
@@ -257,20 +257,30 @@ class Weather():
                 if pixels[col][row] == 1:
                     self.sense.set_pixel(row, col, (bright, 0, 0))
 
-    def uploadDataToIS(self):
-        streamer = Streamer(bucket_name=BUCKET_NAME, bucket_key=BUCKET_KEY, access_key=ACCESS_KEY)
-        temp = round(self.sense.get_temperature_from_humidity(),1)
-        streamer.log("temperature",temp)
-        humidity = round(self.sense.get_humidity(),0)
-        streamer.log("humidity",humidity)
-        pressure = round(self.sense.get_pressure(),0)
-        streamer.log("pressure",pressure)
+    def uploadTempHumidityDataToIS(self):
+        streamer = Streamer(bucket_name=BUCKET_NAME,
+                            bucket_key=BUCKET_KEY, access_key=ACCESS_KEY)
+        temp = round(self.sense.get_temperature_from_humidity(), 1)
+        streamer.log("temperature", temp)
+        humidity = round(self.sense.get_humidity(), 0)
+        streamer.log("humidity", humidity)
         streamer.flush()
-        print("temp {} pressure {} humidity {}".format(temp, pressure, humidity))
+        print("temp {} humidity {}".format(temp, humidity))
+
+    def uploadPressureDataToIS(self):
+        streamer = Streamer(bucket_name=BUCKET_NAME,
+                            bucket_key=BUCKET_KEY, access_key=ACCESS_KEY)
+        pressure = round(self.sense.get_pressure(), 1)
+        streamer.log("pressure", pressure)
+        streamer.flush()
+        print("pressure {}".format(pressure))
 
     def display(self, makeCall):
+        call = time.time()
         while(True):
             data = self.getData(makeCall)
+            self.uploadTempHumidityDataToIS()
+            self.uploadPressureDataToIS()
             # 8 days * 3 seconds = 24 seconds * 10 = 4 minutes * 15 = 1 hour
             for l in range(0, 10 * 15):
                 i = 0
@@ -284,7 +294,10 @@ class Weather():
                 time.sleep(2)
                 self.display_week(data['daily'])
                 time.sleep(5)
-                self.uploadDataToIS()
+                now = time.time()
+                if (now - call) > 60 * 5:
+                    self.uploadTempHumidityDataToIS()
+                    call = time.time()
                 if (l % 3 == 0):
                     life = Life()
                     life.run(8, 8, 30)
