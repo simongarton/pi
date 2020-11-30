@@ -47,10 +47,8 @@ class Chess():
         file = piece[0]
         rank = piece[1]
         type = piece[2]
-        if type == 'P':
-            return self.movePawn(file, rank, 1)
-        if type == 'p':
-            return self.movePawn(file, rank, -1)
+        if type == 'P' or type == 'p':
+            return self.movePawn(file, rank, white)
         return None
 
     def getPiece(self, file, rank):
@@ -72,19 +70,26 @@ class Chess():
             return 9
         if pieceLower == 'k':
             return 100
+    
+    def opposition(self, piece, white):
+        if white:
+            return piece.islower()
+        else:
+            return piece.isupper()
 
-    def movePawn(self, file, rank, direction):
+    def movePawn(self, file, rank, white):
         # a move is [to-file, to-rank, value, from-file, from-rank, moving-piece]
+        direction = 1 if white else -1
         moves = []
         if self.getPiece(file, rank + direction) == '.':
             moves.append([file, rank + direction, 0, file, rank, self.getPiece(file, rank)])
         if rank == 1 and self.getPiece(file, rank + 2 * direction) == '.':
             moves.append([file, rank + 2 *  direction, 0, file, rank, self.getPiece(file, rank)])
         target = self.getPiece(file - 1, rank + direction)
-        if target != None and target != '.' and target.islower():
+        if target != None and target != '.' and self.opposition(target, white):
             moves.append([file - 1, rank + direction, self.getPieceValue(target), file, rank, self.getPiece(file, rank)])
         target = self.getPiece(file + 1, rank + direction)
-        if target != None and target != '.' and target.islower():
+        if target != None and target != '.' and self.opposition(target, white):
             moves.append([file + 1, rank + direction, self.getPieceValue(target), file, rank, self.getPiece(file, rank)])
         if len(moves) == 0:
             return None
