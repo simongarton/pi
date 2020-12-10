@@ -1,7 +1,15 @@
-#from sense_emu import SenseHat
-from sense_hat import SenseHat
 from time import sleep, time
 from random import randint
+
+#from sense_emu import SenseHat
+from sense_hat import SenseHat
+
+# Snake demo. Borrowed someone's Astar code and it doesn't work properly but at least it doesn't crash any more.
+# This is a slightly modified copy of the original to integrate nicely with my Weather app.
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
 
 
 class Node():
@@ -235,7 +243,3 @@ class Snake:
                 if (time() - start_time) > seconds:
                     break
         self.sense.clear()
-
-
-#snake = Snake()
-# snake.run(10)

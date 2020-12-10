@@ -1,7 +1,15 @@
-from sense_emu import SenseHat
-# from sense_hat import SenseHat
 from time import sleep
 from random import randint
+
+from sense_emu import SenseHat
+# from sense_hat import SenseHat
+
+
+# Snake demo. Borrowed someone's Astar code and it doesn't work properly but at least it doesn't crash any more.
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
 
 sense = SenseHat()
 sense.clear()

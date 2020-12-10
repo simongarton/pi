@@ -4,6 +4,12 @@ import time
 from sense_hat import SenseHat
 #from sense_emu import SenseHat
 
+# Start of a tool to monitor my Kung Fu student database to display activity. Not complete.
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
+
 LOCAL_HOST = 'http://localhost:8082/metrics'
 
 PRODUCTION = 'https://api.nzkungfuschool.com/metrics'

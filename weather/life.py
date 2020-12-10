@@ -1,7 +1,16 @@
 import time
+from random import randint
+
 from sense_hat import SenseHat
 #from sense_emu import SenseHat
-from random import randint
+
+# Conway's game of life, on an 8x8 grid, with occasional random cells to break locked patterns
+# and repopulation when empty. Nice little 8x8 color SenseHat demo. Slightly modified from the
+# original to work with my Weather app.
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
 
 
 class Life():
@@ -173,7 +182,3 @@ class Life():
             if not seconds == None:
                 if (time.time() - start_time) > seconds:
                     break
-
-
-#life = Life()
-#life.run(8, 8, 10)

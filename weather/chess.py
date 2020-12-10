@@ -4,29 +4,30 @@ import random
 #from sense_emu import SenseHat
 from sense_hat import SenseHat
 
+# Basic chess demo for SenseHat. Has most moves (can't do en passant, castling, pawns always
+# promote to Queen) and only takes best attacking move possible (won't defend, will also open to check.)
+# Cute enough for a display, but not a serious simulation yet. This is a slightly modified copy of the plain one
+# (up one dir, down to chess) set up to integrate nicely with my Weather app.
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
+
 
 class Chess():
 
     # use file, rank as x,y, reading DOWN the board
-
     def __init__(self):
         self.board = []
         self.board.append('RNBQKBNR')
         self.board.append('PPPPPPPP')
-        # self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
         self.board.append('........')
-        # self.board.append('........')
         self.board.append('pppppppp')
         self.board.append('rnbqkbnr')
 
-        # self.reset_board()
-        # self.set_piece(5,0,'K')
-        # self.set_piece(5,7,'k')
-        # self.set_piece(4,4,'n')
-        # self.set_piece(2,5,'N')
         self.color_values = {
             'k': 250,
             'q': 200,
@@ -53,11 +54,11 @@ class Chess():
                 tile = self.getPiece(file, rank)
                 if tile == '.':
                     continue
-                if tile.isupper() and white:
+                if tile.isupper() and not white:
                     self.set_piece(file, rank, '.')
                     self.undraw_piece(file, rank)
                     time.sleep(0.2)
-                if tile.islower() and not white:
+                if tile.islower() and white:
                     self.set_piece(file, rank, '.')
                     self.undraw_piece(file, rank)
                     time.sleep(0.2)
@@ -216,18 +217,6 @@ class Chess():
             break
         return moves
 
-    def moveRook(self, file, rank, white):
-        moves = []
-        moves.extend(self.moveDirection(file, rank, white, 1, 0))
-        moves.extend(self.moveDirection(file, rank, white, 0, 1))
-        moves.extend(self.moveDirection(file, rank, white, -1, 0))
-        moves.extend(self.moveDirection(file, rank, white, 0, -1))
-        random.shuffle(moves)
-        moves = sorted(moves, key=lambda tup: tup[2], reverse=True)
-        if len(moves) == 0:
-            return None
-        return moves[0]
-
     def moveQueen(self, file, rank, white):
         moves = []
         moves.extend(self.moveDirection(file, rank, white, 1, 1))
@@ -316,11 +305,14 @@ class Chess():
         if move[5] == 'P' and move[1] == 7:
             self.set_piece(move[0], move[1], 'Q')
         if move[5] == 'p' and move[1] == 0:
-            self.set_piece(move[0], move[1], 'Q')
+            self.set_piece(move[0], move[1], 'q')
         # en passant
 
     def moveWhite(self):
         return self.move_generic(True)
+
+    def moveBlack(self):
+        return self.move_generic(False)
 
     def move_generic(self, white):
         pieces = self.findPieces(white)
@@ -333,9 +325,6 @@ class Chess():
         self.move(move[3], move[4], move[0], move[1])
         self.handle_special_circumstances(move, white)
         return True
-
-    def moveBlack(self):
-        return self.move_generic(False)
 
     def play(self):
         move = 1
@@ -365,7 +354,3 @@ class Chess():
                 break
             move = move + 1
         pass
-
-
-chess = Chess()
-chess.play()

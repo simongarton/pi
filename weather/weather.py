@@ -19,9 +19,20 @@ LON = 174.77
 EXCLUDE = ''
 URL = 'https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude{}&appid={}'
 
-ACCESS_KEY = "ist_tYGX1IWVIMYrd0hwY8LU3tEK4-6nA6e1"
+ACCESS_KEY = ""
 BUCKET_KEY = "DYCKPSMEJ57P"
 BUCKET_NAME = "Office"
+
+# My Weather app. Polls OpenWeatherMap.org to get forecasts for Auckland, and then displays 8
+# days of weather icons, followed by a map of the next 8 days showing basic weather and chance of rain.
+# Then for entertainment it drops into Life, Snake or Chess before repeating. Runs on a SenseHat in a nice
+# wooden frame in my study. Forecasts seem pretty good too.
+#
+# https://simongarton.com/docs/projects/post-2020-11-24-raspberry-pi/
+#
+# Simon Garton
+# simon.garton@gmail.com
+# November / December 2020
 
 
 class WeatherReport():
