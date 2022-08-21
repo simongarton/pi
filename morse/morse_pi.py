@@ -6,9 +6,12 @@ import RPi.GPIO as GPIO
 import time
 from morse import Morse
 
-SHORT = 0.2
-LONG = 0.6
-SPACE = 1
+UNIT = 0.2
+SHORT = UNIT
+LONG = 3 * UNIT
+SPACE_PARTS = UNIT
+SPACE_LETTERS = 3 * UNIT
+SPACE_WORDS = 7 * UNIT
 
 PIN = 17
 
@@ -17,7 +20,7 @@ GPIO.setwarnings(False)
 GPIO.setup(PIN, GPIO.OUT)
 
 
-API_KEY = '9cdefeafe3c147ea9e7f316fb25b04f2'
+API_KEY = ''
 
 morse = Morse()
 
@@ -35,19 +38,19 @@ def off():
 def flash(s):
     for c in s:
         flash_one(c)
-    time.sleep(SPACE)
+    time.sleep(SPACE_LETTERS)
 
 
 def flash_one(s):
     print(s)
     if s == ' ':
-        time.sleep(SPACE)
+        time.sleep(SPACE_WORDS)
         return
     if s == '.':
         on()
         time.sleep(SHORT)
         off()
-        time.sleep(LONG)
+        time.sleep(SHORT)
         return
     if s == '-':
         on()
