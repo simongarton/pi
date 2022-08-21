@@ -13,7 +13,7 @@ from chess import Chess
 #from sense_emu import SenseHat
 from sense_hat import SenseHat
 
-API_KEY = '4628a260600466967c04cf9974306321'
+API_KEY = ''
 LAT = -36.87
 LON = 174.77
 EXCLUDE = ''
